@@ -1,0 +1,38 @@
+name: ContentRX
+
+on:
+  pull_request:
+    paths:
+      - "src/**/*.tsx"
+      - "src/**/*.jsx"
+      - "src/**/*.html"
+      - "public/**/*.html"
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  contentrx:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Run ContentRX
+        # Action lives inside the main contentRX repo until it splits
+        # to its own public repo (per github-action/CLAUDE.md). The
+        # `@main` ref tracks the latest production action; pin to a
+        # specific SHA once the action is on the Marketplace.
+        uses: thenewforktimes/ContentRX/github-action@main
+        with:
+          api-key: ${{ secrets.CONTENTRX_API_KEY }}
+          # Default extracts from **/*.{tsx,jsx,html} — explicit paths
+          # below match the workflow `paths:` filter so the action
+          # checks the same files that triggered the run.
+          paths: "{src,public}/**/*.{tsx,jsx,html}"
+          # advisory-only on the first PR — switch to "review" once the
+          # team has triaged the initial backlog.
+          fail-on: none
+          max-checks: 200

@@ -37,12 +37,15 @@ jobs:
         uses: thenewforktimes/ContentRX/github-action@main
         with:
           api-key: ${{ secrets.CONTENTRX_API_KEY }}
-          # Note: the action's _expand_braces only handles a single
-          # brace group, so `{src,public}/**/*.{tsx,jsx,html}` matches
-          # nothing. Default `**/*.{tsx,jsx,html}` works correctly;
-          # the workflow's `paths:` filter above already restricts
-          # which PRs trigger the run.
           # advisory-only on the first PR — switch to "review" once the
           # team has triaged the initial backlog.
           fail-on: none
           max-checks: 200
+        # The action.yml's `env:` block doesn't pass GITHUB_TOKEN
+        # through to the Docker container, so the action's API path
+        # for "what files changed in this PR" silently falls back to
+        # a full-tree rglob — which on GH-hosted runners returns
+        # nothing for the host workspace path. Forcing the token here
+        # so the action's `_fetch_changed_from_api` branch fires.
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

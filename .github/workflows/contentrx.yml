@@ -20,6 +20,15 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Debug — workspace contents
+        run: |
+          echo "GITHUB_WORKSPACE = $GITHUB_WORKSPACE"
+          echo "PWD = $(pwd)"
+          echo "--- top-level ---"
+          ls -la
+          echo "--- src/ recursive ---"
+          ls -R src/ || echo "(no src/)"
+
       - name: Run ContentRX
         # Action lives inside the main contentRX repo until it splits
         # to its own public repo (per github-action/CLAUDE.md). The
@@ -28,11 +37,15 @@ jobs:
         uses: thenewforktimes/ContentRX/github-action@main
         with:
           api-key: ${{ secrets.CONTENTRX_API_KEY }}
-          # Default extracts from **/*.{tsx,jsx,html} — explicit paths
-          # below match the workflow `paths:` filter so the action
-          # checks the same files that triggered the run.
-          paths: "{src,public}/**/*.{tsx,jsx,html}"
           # advisory-only on the first PR — switch to "review" once the
           # team has triaged the initial backlog.
           fail-on: none
           max-checks: 200
+        # The action.yml's `env:` block doesn't pass GITHUB_TOKEN
+        # through to the Docker container, so the action's API path
+        # for "what files changed in this PR" silently falls back to
+        # a full-tree rglob — which on GH-hosted runners returns
+        # nothing for the host workspace path. Forcing the token here
+        # so the action's `_fetch_changed_from_api` branch fires.
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

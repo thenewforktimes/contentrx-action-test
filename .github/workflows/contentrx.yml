@@ -28,10 +28,11 @@ jobs:
         uses: thenewforktimes/ContentRX/github-action@main
         with:
           api-key: ${{ secrets.CONTENTRX_API_KEY }}
-          # Default extracts from **/*.{tsx,jsx,html} — explicit paths
-          # below match the workflow `paths:` filter so the action
-          # checks the same files that triggered the run.
-          paths: "{src,public}/**/*.{tsx,jsx,html}"
+          # Note: the action's _expand_braces only handles a single
+          # brace group, so `{src,public}/**/*.{tsx,jsx,html}` matches
+          # nothing. Default `**/*.{tsx,jsx,html}` works correctly;
+          # the workflow's `paths:` filter above already restricts
+          # which PRs trigger the run.
           # advisory-only on the first PR — switch to "review" once the
           # team has triaged the initial backlog.
           fail-on: none

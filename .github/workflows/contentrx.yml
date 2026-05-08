@@ -20,6 +20,15 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Debug — workspace contents
+        run: |
+          echo "GITHUB_WORKSPACE = $GITHUB_WORKSPACE"
+          echo "PWD = $(pwd)"
+          echo "--- top-level ---"
+          ls -la
+          echo "--- src/ recursive ---"
+          ls -R src/ || echo "(no src/)"
+
       - name: Run ContentRX
         # Action lives inside the main contentRX repo until it splits
         # to its own public repo (per github-action/CLAUDE.md). The

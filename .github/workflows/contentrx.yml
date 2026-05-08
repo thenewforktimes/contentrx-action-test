@@ -34,7 +34,7 @@ jobs:
         # to its own public repo (per github-action/CLAUDE.md). The
         # `@main` ref tracks the latest production action; pin to a
         # specific SHA once the action is on the Marketplace.
-        uses: thenewforktimes/ContentRX/github-action@claude/debug-action-changed-files
+        uses: thenewforktimes/ContentRX/github-action@main
         with:
           api-key: ${{ secrets.CONTENTRX_API_KEY }}
           # advisory-only on the first PR — switch to "review" once the
